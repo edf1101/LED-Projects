@@ -13,6 +13,11 @@
 #include "lib/Adafruit_NeoPixel/Adafruit_NeoPixel.h"
 
 #include "Group/Group.h"
+
+#include "Set/Set.h"
+#include "Set/Set1D.h"
+#include "Set/Set2D.h"
+
 #include "string"
 #include "vector"
 
@@ -44,9 +49,10 @@ protected:
     std::unordered_map<std::string, Group*> groups;
 
     /**
-     * A unit is a collection of the smallest addressable group of leds, store the unit groups here and
+     * A set is an ordered collection of groups, store the sets here.
+     * Ie all the vertical bars, all the horizontal bars, etc
      */
-    std::unordered_map<int, Group> units;
+    std::unordered_map<std::string, Set*> sets;
 
     /**
      * This hold the colour of each led in the project

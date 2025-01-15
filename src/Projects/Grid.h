@@ -16,7 +16,7 @@ public:
 
 private:
     void createGroups() override;
-    void createSets() override {};
+    void createSets() override;
 
     int gridWidth;
     int gridHeight;

@@ -41,9 +41,52 @@ void Grid::createGroups() {
   }
 }
 
+void Grid::createSets() {
+
+  // create the horizontal row set
+  std::vector<Set1DPair> rowPairings;
+  for (int i = 0; i < gridHeight; i++) {
+    std::string name = "Row" + std::to_string(i);
+    rowPairings.push_back({groups[name], 0});
+  }
+  auto *rowSet = new Set1D(rowPairings);
+  sets.insert({"AllRowSet", rowSet});
+
+  // create the vertical column set
+  std::vector<Set1DPair> colPairings;
+  for (int i = 0; i < gridWidth; i++) {
+    std::string name = "Col" + std::to_string(i);
+    colPairings.push_back({groups[name], 0});
+  }
+  auto *colSet = new Set1D(colPairings);
+  sets.insert({"AllColSet", colSet});
+
+
+  // create the individual column sets
+  for (int i = 0; i < gridWidth; i++) {
+    std::vector<Set1DPair> pairings;
+    for (int j = 0; j < gridHeight; j++) {
+      std::string name = "Base" + std::to_string(gridToPix(i, j));
+      pairings.push_back({groups[name], 0});
+    }
+    auto *set = new Set1D(pairings);
+    sets.insert({"IndivCol" + std::to_string(i), set});
+  }
+
+  // create the grid set
+  std::vector<Set2DPair> gridPairings;
+  for (int i = 0; i < gridWidth; i++) {
+    for (int j = 0; j < gridHeight; j++) {
+      std::string name = "Base" + std::to_string(gridToPix(i, j));
+      gridPairings.push_back({groups[name], (float) i, (float) j});
+    }
+  }
+
+}
+
 void Grid::init() {
   createGroups();
-
+  createSets();
 }
 
 int Grid::gridToPix(int x, int y) {
@@ -54,3 +97,5 @@ int Grid::gridToPix(int x, int y) {
     n += 7 - y;
   return n;
 }
+
+
