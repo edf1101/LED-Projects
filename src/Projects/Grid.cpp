@@ -4,6 +4,12 @@
 
 #include "Grid.h"
 
+#include "Effects/Wave1D.h"
+#include "Effects/Wave2D.h"
+#include "Effects/PerlinEffect.h"
+#include "Effects/RadialWave.h"
+#include "Effects/AngularWave.h"
+
 Grid::Grid(short dataPin, neoPixelType type, short gridWidth, short gridHeight) : Project(128, dataPin, type) {
   this->gridWidth = gridWidth;
   this->gridHeight = gridHeight;
@@ -94,8 +100,14 @@ void Grid::createEffects() {
   auto *rainbow2DWave = new Wave2D("Rainbow 2D Wave", (Set2D *) sets["GridSet"], 135);
   effects.insert({"Rainbow 2D Wave", rainbow2DWave});
 
-  auto *perlinEffect = new PerlinEffect("Perlin Effect", (Set2D *) sets["GridSet"],1, 1);
+  auto *perlinEffect = new PerlinEffect("Perlin Effect", (Set2D *) sets["GridSet"], 1, 1);
   effects.insert({"Perlin Effect", perlinEffect});
+
+  auto *radialWave = new RadialWave("Radial Wave", (Set2D *) sets["GridSet"]);
+  effects.insert({"Radial Wave", radialWave});
+
+  auto *angularWave = new AngularWave("Angular Wave", (Set2D *) sets["GridSet"], 0.5, 0.5, 1);
+  effects.insert({"Angular Wave", angularWave});
 }
 
 void Grid::init() {
@@ -108,16 +120,16 @@ void Grid::init() {
   Serial.println("made effects");
 
   // set bottom row as green to test
-  setEffect("Perlin Effect", 1.0f);
+  setEffect("Angular Wave", 1.0f);
   Serial.println("set effects");
 
 }
 
 int Grid::gridToPix(int x, int y) {
-  int n = x * 8;
+  int n = x * gridHeight;
   if (x % 2 == 0)
     n += y;
   else
-    n += 7 - y;
+    n += gridHeight - 1 - y;
   return n;
 }
