@@ -41,11 +41,3 @@ int Set2D::getSetSize() {
   return (int) pairings.size();
 }
 
-/**
- * Get the group / location at a given index.
- * @param i The index of the group / location to get.
- * @return The group / location at the given index.
- */
-Set2DPair Set2D::getPair(int i) {
-  return pairings[i];
-}

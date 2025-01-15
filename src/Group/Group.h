@@ -16,10 +16,10 @@ class Project; // forward declaration
  */
 class Group {
 public:
-    Group(Project* myProject, std::vector<int> ledIndices); // constructor for when you have a base group of just LEDs
-    Group(Project* myProject, std::vector<Group*> subGroups); // constructor for when you have a group made of other groups
+    Group(std::vector<int> ledIndices); // constructor for when you have a base group of just LEDs
+    Group(std::vector<Group*> subGroups); // constructor for when you have a group made of other groups
 
-    void setLeds(uint32_t colour);
+    void setLeds(uint32_t colour, std::vector<uint32_t>& output);
 
 private:
     Project* myProject;

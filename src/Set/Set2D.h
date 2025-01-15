@@ -19,23 +19,23 @@ struct Set2DPair {
 
 class Set2D : public Set {
 public:
-    Set2D(vector<Set2DPair> pairings);
+    explicit Set2D(vector<Set2DPair> pairings);
 
     int getSetSize();
 
-    Set2DPair getPair(int i);
+    vector<Set2DPair> getPairings(){return pairings;};
 
-    int getMaxX() const { return maxX; }
-    int getMaxY() const { return maxY; }
-    int getMinX() const { return minX; }
-    int getMinY() const { return minY; }
+    float getMaxX() const { return maxX; }
+    float getMaxY() const { return maxY; }
+    float getMinX() const { return minX; }
+    float getMinY() const { return minY; }
 
 private:
     vector<Set2DPair> pairings;
-    int maxX = 0;
-    int maxY = 0;
-    int minX = 0;
-    int minY = 0;
+    float maxX = -infinityf();
+    float maxY = -infinityf();
+    float minX = infinityf();
+    float minY = infinityf();
 
 };
 

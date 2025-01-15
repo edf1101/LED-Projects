@@ -20,6 +20,7 @@ void setup() {
 }
 
 void loop() {
+  myProject->loop();
   myProject->drawLeds(&strip);
   delay(1);
 }

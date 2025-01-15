@@ -7,6 +7,10 @@
 
 #include "Project.h"
 
+#include "Effects/Wave1D.h"
+#include "Effects/Wave2D.h"
+#include "Effects/PerlinEffect.h"
+
 class Grid : public Project {
 public:
     explicit Grid(short dataPin = 4, neoPixelType type = NEO_GRB + NEO_KHZ800, short gridWidth = 16,
@@ -17,11 +21,12 @@ public:
 private:
     void createGroups() override;
     void createSets() override;
+    void createEffects() override;
 
     int gridWidth;
     int gridHeight;
 
-    int gridToPix(int x, int y); // Convert grid coordinates to pixel index
+    static int gridToPix(int x, int y); // Convert grid coordinates to pixel index
 };
 
 

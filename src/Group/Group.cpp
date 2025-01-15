@@ -10,10 +10,9 @@
 /**
  * This is the constructor for the Group class. It is used when you have a base group of just LEDs.
  *
- * @param myProject The reference to the project that the group is part of so we can later write to its LED strip.
  * @param ledIndices The indices of the LEDs that are part of this group.
  */
-Group::Group(Project *myProject, std::vector<int> ledIndices) {
+Group::Group(std::vector<int> ledIndices) {
   this->myProject = myProject;
   this->ledIndices = std::move(ledIndices);
 }
@@ -21,11 +20,9 @@ Group::Group(Project *myProject, std::vector<int> ledIndices) {
 /**
  * This is the constructor for the Group class. It is used when you have a group made of other groups.
  *
- * @param myProject The reference to the project that the group is part of so we can later write to its LED strip.
  * @param subGroups The subgroups that make up this group.
  */
-Group::Group(Project *myProject, std::vector<Group*> subGroups) {
-  this->myProject = myProject;
+Group::Group(std::vector<Group*> subGroups) {
   this->subGroups = std::move(subGroups);
 }
 
@@ -34,12 +31,12 @@ Group::Group(Project *myProject, std::vector<Group*> subGroups) {
  *
  * @param colour The colour that the LEDs should be set to.
  */
-void Group::setLeds(uint32_t colour) {
+void Group::setLeds(uint32_t colour, std::vector<uint32_t>& output) {
   for (int ledIndice: ledIndices) {
-    myProject->setLed(ledIndice, colour);
+    output[ledIndice] = colour;
   }
   for (Group* &subGroup: subGroups) {
-    subGroup->setLeds(colour);
+    subGroup->setLeds(colour, output);
   }
 }
 

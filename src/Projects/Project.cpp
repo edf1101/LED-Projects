@@ -42,3 +42,39 @@ void Project::drawLeds(Adafruit_NeoPixel *strip) {
 void Project::setLed(int ledIndex, uint32_t colour) {
   leds[ledIndex] = colour;
 }
+
+/**
+ * This is called each frame and does stuff like rendering / handling effects
+ */
+void Project::loop() {
+  // render the effects according to their weight
+  int currentEffectSize = (int) currentEffects.size();
+  for (int i = 0; i < numLeds; i++) {
+    leds[i] = 0;
+  }
+  if (currentEffectSize == 1) {
+    currentEffects[0].effect->renderEffect(leds);
+  } else if (currentEffectSize > 1) {
+    // interpolate between the effects based on weight
+    std::vector<uint32_t> output(numLeds);
+    for (int i = 0; i < currentEffectSize; i++) {
+      currentEffects[i].effect->renderEffect(output);
+      for (int j = 0; j < numLeds; j++) {
+        leds[j] += output[j] * currentEffects[i].weight;
+      }
+    }
+  }
+}
+
+/**
+ * Set the effect to be used
+ *
+ * @param effectName The name of the effect in the effects dictionary
+ * @param weight The weight of the effect
+ */
+void Project::setEffect(const std::string& effectName, float weight) {
+  auto effect = effects[effectName];
+  currentEffects.clear();
+  currentEffects.push_back({effect, weight});
+
+}

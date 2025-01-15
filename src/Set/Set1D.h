@@ -18,20 +18,19 @@ struct Set1DPair {
 
 class Set1D : public Set {
 public:
-    Set1D(vector<Set1DPair> pairings);
+    explicit Set1D(vector<Set1DPair> pairings);
 
     int getSetSize();
 
-    Set1DPair getPair(int i);
+    vector<Set1DPair> getPairings(){return pairings;};
+    float getMaxX();
 
-    int getMaxX() const;
-
-    int getMinX();
+    float getMinX();
 
 private:
     vector<Set1DPair> pairings;
-    int maxX;
-    int minX;
+    float maxX;
+    float minX;
 
 };
 

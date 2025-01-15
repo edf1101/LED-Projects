@@ -15,9 +15,9 @@ Set1D::Set1D(vector<Set1DPair> pairings) {
   this->pairings = std::move(pairings);
 
   // calculate the max x value
-  maxX = 0;
-  minX = 0;
-  for (auto &pair: pairings) {
+  maxX = -infinityf();
+  minX = infinityf();
+  for (auto &pair: this->pairings) {
     if (pair.iPos > maxX) {
       maxX = pair.iPos;
     }
@@ -25,8 +25,6 @@ Set1D::Set1D(vector<Set1DPair> pairings) {
       minX = pair.iPos;
     }
   }
-  this->maxX = maxX;
-  this->minX = minX;
 }
 
 /**
@@ -35,16 +33,7 @@ Set1D::Set1D(vector<Set1DPair> pairings) {
  * @return the size of the set.
  */
 int Set1D::getSetSize() {
-  return pairings.size();
-}
-
-/**
- * Get the group / location at a given index.
- * @param i The index of the group / location to get.
- * @return The group / location at the given index.
- */
-Set1DPair Set1D::getPair(int i) {
-  return pairings[i];
+  return (int)pairings.size();
 }
 
 /**
@@ -52,7 +41,7 @@ Set1DPair Set1D::getPair(int i) {
  *
  * @return the maximum x value of the set.
  */
-int Set1D::getMaxX() const {
+float Set1D::getMaxX() {
   return maxX;
 }
 
@@ -61,7 +50,7 @@ int Set1D::getMaxX() const {
  *
  * @return the minimum x value of the set.
  */
-int Set1D::getMinX() {
+float Set1D::getMinX() {
   return minX;
 }
 
