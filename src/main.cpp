@@ -14,7 +14,11 @@ Adafruit_NeoPixel strip(myProject->getNumLeds(),
 void setup() {
   Serial.begin(115200);
   randomSeed(analogRead(0));
+
   myProject->init();
+  myProject->addAudioAnalysis(14, 15, 32, false);
+  myProject->addWifi("SKYF93G6", "CSZt6Q9x4rDJ");
+
   // Initialize all pixels to 'off'
   strip.begin();
   strip.clear();

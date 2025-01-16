@@ -28,7 +28,7 @@ const char Web::index_html[] PROGMEM = R"rawliteral(
   </style>
 </head>
 <body>
-  <h2>ESP Web Server</h2>
+  <h2>LED Controller</h2>
 
   <!-- Effect Selection Section -->
   <p>Effect Selection</p>
@@ -99,7 +99,7 @@ const char Web::index_html[] PROGMEM = R"rawliteral(
 
 
 
-void Web::setup(Project *_project) {
+void Web::setup(Project *_project, const char *ssid, const char *password) {
   myProject = _project;
   names = myProject->getEffectNames();
   // Debugging
@@ -183,6 +183,8 @@ void Web::handleSetColorsRequest(AsyncWebServerRequest *request) {
     };
     auto *newGradient = new Gradient(newStops, 3, false);
     Gradient::setCurrentGradient(newGradient);
+
+
 
     request->send(200, "text/plain", "Colors received");
   } else {

@@ -24,7 +24,7 @@ double SpectrumAnalysis::fftBin[I2S_Samples];
 unsigned int SpectrumAnalysis::sampling_period_us;
 unsigned long SpectrumAnalysis::microseconds;
 
-void SpectrumAnalysis::setupAudio() {
+void SpectrumAnalysis::setupAudio(int sck, int ws, int sd, bool leftChannel) {
 
   // Attempt to configure INMP441 Microphone
   esp_err_t err;
@@ -32,17 +32,18 @@ void SpectrumAnalysis::setupAudio() {
           .mode = i2s_mode_t(I2S_MODE_MASTER | I2S_MODE_RX),  // Receive, not transfer
           .sample_rate = SAMPLE_RATE * 2,                       // 10240 * 2 (20480) Hz
           .bits_per_sample = I2S_BITS_PER_SAMPLE_32BIT,       // could only get it to work with 32bits
-          .channel_format = I2S_CHANNEL_FMT_ONLY_RIGHT,        // LEFT when pin is tied to ground.
+          .channel_format = leftChannel ? I2S_CHANNEL_FMT_ONLY_LEFT
+                                        : I2S_CHANNEL_FMT_ONLY_RIGHT,        // LEFT when pin is tied to ground.
           .communication_format = i2s_comm_format_t(I2S_COMM_FORMAT_I2S | I2S_COMM_FORMAT_I2S_MSB),
           .intr_alloc_flags = ESP_INTR_FLAG_LEVEL1,           // Interrupt level 1
           .dma_buf_count = 8,                                 // number of buffers
           .dma_buf_len = BLOCK_SIZE                           // samples per buffer
   };
   const i2s_pin_config_t pin_config = {
-          .bck_io_num = I2S_SCK,      // BCLK aka SCK
-          .ws_io_num = I2S_WS,        // LRCL aka WS
+          .bck_io_num = sck,      // BCLK aka SCK
+          .ws_io_num = ws,        // LRCL aka WS
           .data_out_num = -1,         // not used (only for speakers)
-          .data_in_num = I2S_SD       // DOUT aka SD
+          .data_in_num = sd       // DOUT aka SD
   };
 
   // Configuring the I2S driver and pins.
@@ -80,7 +81,7 @@ void SpectrumAnalysis::setupAudio() {
     }
     mean = mean / BLOCK_SIZE / 16384;
     if (mean != 0.0) {
-      //  Serial.println("Digital microphone is present.");
+        Serial.println("Digital microphone is present.");
     } else {
       Serial.println("Digital microphone is NOT present.");
     }

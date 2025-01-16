@@ -13,8 +13,7 @@ public:
                   short gridHeight = 8);
 
     void init();
-
-
+    void addAudioAnalysis(int sck, int ws, int sd, bool leftChannel) override;
 private:
     void createGroups() override;
 

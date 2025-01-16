@@ -11,6 +11,7 @@
 #include "Effects/AngularWave.h"
 #include "Effects/Rainfall.h"
 #include "Effects/RippleEffect.h"
+#include "Effects/Spectrometer.h"
 
 Grid::Grid(short dataPin, neoPixelType colourType, neoPixelType otherData, short gridWidth, short gridHeight) : Project(
         128, dataPin, colourType, otherData) {
@@ -95,11 +96,6 @@ void Grid::createSets() {
 }
 
 void Grid::createEffects() {
-
-  // create the rainbow effect
-  auto *wave1D = new Wave1D("1D Wave", (Set1D *) sets["AllColSet"]);
-  effects.insert({wave1D->getName(), wave1D});
-
   auto *wave2D = new Wave2D("2D Wave", (Set2D *) sets["GridSet"], 135);
   effects.insert({wave2D->getName(), wave2D});
 
@@ -127,8 +123,6 @@ void Grid::init() {
   createGroups();
   createSets();
   createEffects();
-  Project::initWifi(); // needs to be after createEffects
-
   // Initial gradient
   GradientStop *initialStops = new GradientStop[3]{
           {0,   255, 255, 0,   0},
@@ -147,4 +141,17 @@ int Grid::gridToPix(int x, int y) {
   else
     n += gridHeight - 1 - y;
   return n;
+}
+
+void Grid::addAudioAnalysis(int sck, int ws, int sd, bool leftChannel) {
+  Project::addAudioAnalysis(sck, ws, sd, leftChannel);
+
+//   add effects that require audio analysis
+  vector<Set1D *> indivCols = {};
+  for (int i = 0; i < gridWidth; i++) {
+    indivCols.push_back((Set1D *) sets["IndivCol" + std::to_string(i)]);
+  }
+  auto *spectrometer = new Spectrometer("Spectrometer", indivCols, 1);
+  effects.insert({spectrometer->getName(), spectrometer});
+
 }

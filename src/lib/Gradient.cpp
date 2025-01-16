@@ -44,15 +44,15 @@ void Gradient::updateStops(GradientStop *stops, uint8_t numStops) {
 void Gradient::gradientSwitchLoop() {
   static unsigned long lastUpdateTime = millis(); // Track the last update time
 
-  if (switchToGradient == nullptr) {
-    gradientRatio = 1.0f;
-    return;
-  }
-
   // Calculate the time delta and update `gradientRatio`
   unsigned long currentTime = millis();
   float weightStep = (1.0f / TRANSISTION_LENGTH) * (currentTime - lastUpdateTime);
   lastUpdateTime = currentTime;
+
+  if (switchToGradient == nullptr) {
+    gradientRatio = 1.0f;
+    return;
+  }
 
   // Reduce `gradientRatio` by the calculated weightStep
   gradientRatio -= weightStep;
@@ -76,6 +76,7 @@ void Gradient::gradientSwitchLoop() {
 
 void Gradient::setCurrentGradient(Gradient *gradient) {
   if (gradient == currentGradient || switchToGradient != nullptr) {
+
     delete gradient; // Free the unused gradient
     return;
   }

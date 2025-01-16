@@ -14,7 +14,7 @@ const int SAMPLE_RATE = 10240;
 class SpectrumAnalysis {
 
 public:
-    void setupAudio();
+    void setupAudio(int sck, int ws, int sd, bool leftChannel);
 
     static int fftResult[16];                      // Our calculated result table, which we feed to the animations.
 

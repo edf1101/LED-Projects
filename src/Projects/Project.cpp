@@ -78,9 +78,9 @@ void Project::loop() {
     // Interpolate between effects
     std::vector<uint32_t> output(numLeds, 0); // Temporary buffer for effect output
     for (int i = 0; i < currentEffectSize; i++) {
+      output = std::vector<uint32_t>(numLeds, 0); // Clear the buffer
       currentEffects[i].effect->renderEffect(output); // Render the effect
 
-      // Blend the output based on weights
       for (int j = 0; j < numLeds; j++) {
         uint32_t color = output[j];
         uint8_t r = (color >> 16) & 0xFF;
@@ -88,11 +88,15 @@ void Project::loop() {
         uint8_t b = color & 0xFF;
         uint8_t w = hasWComponents ? ((color >> 24) & 0xFF) : 0;
 
-        // Interpolate each channel
-        leds[j] = ((uint32_t) (((leds[j] >> 16) & 0xFF) + r * currentEffects[i].weight) << 16) |
-                  ((uint32_t) (((leds[j] >> 8) & 0xFF) + g * currentEffects[i].weight) << 8) |
-                  ((uint32_t) ((leds[j] & 0xFF) + b * currentEffects[i].weight)) |
-                  (hasWComponents ? ((uint32_t) (((leds[j] >> 24) & 0xFF) + w * currentEffects[i].weight) << 24) : 0);
+        // Clamp and blend the values
+        r = std::min(255, (int)((leds[j] >> 16 & 0xFF) + r * currentEffects[i].weight));
+        g = std::min(255, (int)((leds[j] >> 8 & 0xFF) + g * currentEffects[i].weight));
+        b = std::min(255, (int)((leds[j] & 0xFF) + b * currentEffects[i].weight));
+        w = hasWComponents
+            ? std::min(255, (int)((leds[j] >> 24 & 0xFF) + w * currentEffects[i].weight))
+            : 0;
+
+        leds[j] = Adafruit_NeoPixel::Color(r, g, b, w);
       }
     }
   }
@@ -141,4 +145,27 @@ std::string Project::getCurrentEffectName() {
   if (currentEffects.empty())
     return "None";
   return currentEffects[0].effect->getName();
+}
+
+/**
+ * The base function adds just the audio analysis class,
+ * sub classes will call this then add effects.
+ */
+void Project::addAudioAnalysis(int sck, int ws, int sd, bool leftChannel) {
+  if (audioAnalysis == nullptr) {
+    audioAnalysis = new SpectrumAnalysis();
+    audioAnalysis->setupAudio(sck, ws, sd, leftChannel);
+  }
+}
+
+/**
+ * Add a wifi connection to the project
+ *
+ * @param ssid SSID of the wifi network
+ * @param password Password of the wifi network
+ */
+void Project::addWifi(const char *ssid, const char *password) {
+  webServer = new Web();
+  webServer->setup(this, ssid, password);
+
 }

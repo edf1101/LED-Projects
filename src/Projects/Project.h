@@ -48,16 +48,21 @@ public:
     void drawLeds(Adafruit_NeoPixel *strip);
 
     void setEffect(const std::string &effectName);
+
     std::string getCurrentEffectName();
+
     std::vector<std::string> getEffectNames();
+
+    virtual void addAudioAnalysis(int sck, int ws, int sd, bool leftChannel);
+
+    void addWifi(const char *ssid, const char *password);
+
 
 protected:
     const int numLeds;
     const short dataPin;
     const neoPixelType colourType;
     const neoPixelType otherData;
-
-    void initWifi() { webServer.setup(this); }
 
 
     /**
@@ -88,6 +93,7 @@ protected:
 
     bool hasWComponents = true;
 
+    SpectrumAnalysis *audioAnalysis = nullptr;
 
 private:
     struct EffectWeight {
@@ -96,7 +102,7 @@ private:
     };
     std::vector<EffectWeight> currentEffects;
 
-    Web webServer;
+    Web *webServer;
 
 };
 
