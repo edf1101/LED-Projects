@@ -33,7 +33,7 @@ void AngularWave::renderEffect(vector<uint32_t> &output) {
     wave = wave / 2 + 0.5;
 
     // set the pixel colour
-    uint32_t col = Gradient::rainbowGradient.getColor(wave * 255);
+    uint32_t col = Gradient::sampleGradient(wave * 255);
     pair.group->setLeds(col, output);
   }
 }

@@ -10,7 +10,8 @@
 #include "Effects/RadialWave.h"
 #include "Effects/AngularWave.h"
 
-Grid::Grid(short dataPin, neoPixelType type, short gridWidth, short gridHeight) : Project(128, dataPin, type) {
+Grid::Grid(short dataPin, neoPixelType colourType, neoPixelType otherData, short gridWidth, short gridHeight) : Project(
+        128, dataPin, colourType, otherData) {
   this->gridWidth = gridWidth;
   this->gridHeight = gridHeight;
 }
@@ -94,35 +95,35 @@ void Grid::createSets() {
 void Grid::createEffects() {
 
   // create the rainbow effect
-  auto *rainbow1DWave = new Wave1D("Rainbow 1D Wave", (Set1D *) sets["AllColSet"]);
-  effects.insert({"Rainbow 1D Wave", rainbow1DWave});
+  auto *wave1D = new Wave1D("1D Wave", (Set1D *) sets["AllColSet"]);
+  effects.insert({wave1D->getName(), wave1D});
 
-  auto *rainbow2DWave = new Wave2D("Rainbow 2D Wave", (Set2D *) sets["GridSet"], 135);
-  effects.insert({"Rainbow 2D Wave", rainbow2DWave});
+  auto *wave2D = new Wave2D("2D Wave", (Set2D *) sets["GridSet"], 135);
+  effects.insert({wave2D->getName(), wave2D});
 
   auto *perlinEffect = new PerlinEffect("Perlin Effect", (Set2D *) sets["GridSet"], 1, 1);
-  effects.insert({"Perlin Effect", perlinEffect});
+  effects.insert({perlinEffect->getName(), perlinEffect});
 
   auto *radialWave = new RadialWave("Radial Wave", (Set2D *) sets["GridSet"]);
-  effects.insert({"Radial Wave", radialWave});
+  effects.insert({radialWave->getName(), radialWave});
 
   auto *angularWave = new AngularWave("Angular Wave", (Set2D *) sets["GridSet"], 0.5, 0.5, 1);
-  effects.insert({"Angular Wave", angularWave});
+  effects.insert({angularWave->getName(), angularWave});
 }
 
 void Grid::init() {
-  Serial.println("Got to init in Grid.");
   createGroups();
   createSets();
-  Serial.println("made sets");
-
   createEffects();
-  Serial.println("made effects");
 
-  // set bottom row as green to test
-  setEffect("Angular Wave", 1.0f);
-  Serial.println("set effects");
-
+  // Initial gradient
+  GradientStop *initialStops = new GradientStop[3]{
+          {0,   255, 255, 0,   0},
+          {128, 0,   255, 255, 0},
+          {255, 255, 255, 0,   0},
+  };
+  Gradient *initialGradient = new Gradient(initialStops, 3, false);
+  Gradient::setCurrentGradient(initialGradient);
 }
 
 int Grid::gridToPix(int x, int y) {

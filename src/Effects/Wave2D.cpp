@@ -63,7 +63,7 @@ void Wave2D::renderEffect(vector<uint32_t> &output) {
     if (wavePosition < 0) wavePosition += 1.0f;
 
     // Map wavePosition to color using the gradient
-    uint32_t colour = Gradient::rainbowGradient.getColor(255 * wavePosition);
+    uint32_t colour = Gradient::sampleGradient(255 * wavePosition);
 
     // Assign color to the group's LEDs
     pair.group->setLeds(colour, output);

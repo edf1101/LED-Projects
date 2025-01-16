@@ -29,7 +29,7 @@ void RadialWave::renderEffect(vector<uint32_t> &output) {
     float distance = sqrt(pow(pairX - centerX, 2) + pow(pairY - centerY, 2));
     float wavePosition = distance + offset;
     wavePosition = fmod(wavePosition, 1.0f);
-    uint32_t colour = Gradient::rainbowGradient.getColor(wavePosition * 255);
+    uint32_t colour = Gradient::sampleGradient(wavePosition * 255);
     pair.group->setLeds(colour, output);
   }
 }

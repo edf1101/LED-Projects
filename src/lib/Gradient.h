@@ -14,28 +14,31 @@ public:
     Gradient(GradientStop *stops, uint8_t numStops, bool isRGBW = false)
             : _stops(stops), _numStops(numStops), _isRGBW(isRGBW) {}
 
-    // Interpolate the gradient to get the color at a specific position
-    uint32_t getColor(uint8_t position);
+    ~Gradient() {
+      // Free the dynamically allocated stops if they exist
+      if (_stops) {
+        delete[] _stops;
+        _stops = nullptr;
+      }
+    }
 
-    // Set a new array of gradient stops
-    void setStops(GradientStop *stops, uint8_t numStops);
+    uint32_t getColor(uint8_t position); // Interpolate the gradient to get the color at a specific position
+    void updateStops(GradientStop *stops, uint8_t numStops); // Update gradient stops
 
-    // Update a specific stop by index
-    void updateStop(uint8_t index, GradientStop stop);
+    void setRGBW(bool isRGBW) { _isRGBW = isRGBW; } // Set RGBW flag
 
-    // Get the number of stops
-    uint8_t getNumStops() const { return _numStops; }
-
-    // Predefined rainbow stops (declared here, defined later)
-    static const GradientStop rainbowStops[4];
-
-    // Predefined rainbow gradient (declared here, defined later)
-    static Gradient rainbowGradient;
+    static void setCurrentGradient(Gradient *gradient);
+    static void gradientSwitchLoop();
+    static uint32_t sampleGradient(uint8_t position);
 
 private:
     GradientStop *_stops;  // Pointer to gradient stops
     uint8_t _numStops;     // Number of gradient stops
     bool _isRGBW;          // Whether the strip is RGBW
+
+    static Gradient *currentGradient;
+    static Gradient *switchToGradient;
+    static float gradientRatio; // 1 = fully currentGradient, 0 = fully switchToGradient
 };
 
 #endif //LED_PROJECTS_GRADIENT_H

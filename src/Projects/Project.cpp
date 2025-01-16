@@ -6,6 +6,8 @@
 
 #include "Project.h"
 
+#define BLENDING_DURATION 2000.0
+
 /**
  * Constructor
  *
@@ -13,12 +15,16 @@
  * @param dataPin the data pin for the project
  * @param type the type of leds used (GRB, RGB, etc)
  */
-Project::Project(int numLeds, short dataPin, neoPixelType type)
-        : numLeds(numLeds), dataPin(dataPin), type(type), leds(numLeds) {
+Project::Project(int numLeds, short dataPin, neoPixelType colourType, neoPixelType otherData)
+        : numLeds(numLeds), dataPin(dataPin), colourType(colourType), otherData(otherData), leds(numLeds) {
   // set all leds to black on start
   for (int i = 0; i < numLeds; i++) {
     leds[i] = Adafruit_NeoPixel::Color(0, 0, 0);
   }
+
+  if (colourType == NEO_RGB || colourType == NEO_RBG || colourType == NEO_GRB || colourType == NEO_GBR
+      || colourType == NEO_BRG || colourType == NEO_BGR)
+    hasWComponents = false;
 }
 
 /**
@@ -34,37 +40,64 @@ void Project::drawLeds(Adafruit_NeoPixel *strip) {
 }
 
 /**
- * Set the colour of a led
- *
- * @param ledIndex the index of the led to set
- * @param colour the colour to set the led to
- */
-void Project::setLed(int ledIndex, uint32_t colour) {
-  leds[ledIndex] = colour;
-}
-
-/**
  * This is called each frame and does stuff like rendering / handling effects
  */
 void Project::loop() {
-  // render the effects according to their weight
+  static unsigned long lastUpdateTime = millis(); // Track the last update time
+  float weightStep = (1.0 / BLENDING_DURATION) * (millis() - lastUpdateTime);
+  lastUpdateTime = millis();
+
+  // Render the effects according to their weight
   int currentEffectSize = (int) currentEffects.size();
+  // Clear the LED buffer
   for (int i = 0; i < numLeds; i++) {
     leds[i] = 0;
   }
+
   if (currentEffectSize == 1) {
+    // Single effect fully applied
+    currentEffects[0].weight = 1;
     currentEffects[0].effect->renderEffect(leds);
   } else if (currentEffectSize > 1) {
-    // interpolate between the effects based on weight
-    std::vector<uint32_t> output(numLeds);
+    // Adjust weights dynamically based on the time elapsed
+    currentEffects[0].weight -= weightStep;
+    currentEffects[1].weight += weightStep;
+
+    // Clamp weights to valid range [0, 1]
+    if (currentEffects[0].weight < 0) currentEffects[0].weight = 0;
+    if (currentEffects[1].weight > 1) currentEffects[1].weight = 1;
+
+    // Remove the first effect if its weight reaches 0
+    if (currentEffects[0].weight <= 0.03) {
+      currentEffects.erase(currentEffects.begin());
+      currentEffects[0].effect->renderEffect(leds);
+      currentEffects[0].weight = 1;
+      return;
+    }
+
+    // Interpolate between effects
+    std::vector<uint32_t> output(numLeds, 0); // Temporary buffer for effect output
     for (int i = 0; i < currentEffectSize; i++) {
-      currentEffects[i].effect->renderEffect(output);
+      currentEffects[i].effect->renderEffect(output); // Render the effect
+
+      // Blend the output based on weights
       for (int j = 0; j < numLeds; j++) {
-        leds[j] += output[j] * currentEffects[i].weight;
+        uint32_t color = output[j];
+        uint8_t r = (color >> 16) & 0xFF;
+        uint8_t g = (color >> 8) & 0xFF;
+        uint8_t b = color & 0xFF;
+        uint8_t w = hasWComponents ? ((color >> 24) & 0xFF) : 0;
+
+        // Interpolate each channel
+        leds[j] = ((uint32_t)(((leds[j] >> 16) & 0xFF) + r * currentEffects[i].weight) << 16) |
+                  ((uint32_t)(((leds[j] >> 8) & 0xFF) + g * currentEffects[i].weight) << 8) |
+                  ((uint32_t)((leds[j] & 0xFF) + b * currentEffects[i].weight)) |
+                  (hasWComponents ? ((uint32_t)(((leds[j] >> 24) & 0xFF) + w * currentEffects[i].weight) << 24) : 0);
       }
     }
   }
 }
+
 
 /**
  * Set the effect to be used
@@ -72,9 +105,16 @@ void Project::loop() {
  * @param effectName The name of the effect in the effects dictionary
  * @param weight The weight of the effect
  */
-void Project::setEffect(const std::string& effectName, float weight) {
-  auto effect = effects[effectName];
-  currentEffects.clear();
-  currentEffects.push_back({effect, weight});
+void Project::setEffect(const std::string &effectName) {
+  if (effects.find(effectName) == effects.end()) {
+    return;
+  }
+  if (currentEffects.size() > 2)
+    return;
 
+  if (!currentEffects.empty() && currentEffects[0].effect->getName() == effectName)
+    return;
+
+  auto effect = effects[effectName];
+  currentEffects.push_back({effect, 0});
 }

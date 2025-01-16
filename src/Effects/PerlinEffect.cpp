@@ -39,7 +39,7 @@ void PerlinEffect::renderEffect(vector<uint32_t> &output) {
     noiseValue = min(1.0f, max(0.0f, noiseValue));
 
     // set the pixel colour
-    uint32_t col = Gradient::rainbowGradient.getColor(noiseValue * 255);
+    uint32_t col = Gradient::sampleGradient(noiseValue * 255);
     pair.group->setLeds(col, output);
 
   }

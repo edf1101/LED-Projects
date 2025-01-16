@@ -9,7 +9,7 @@
 
 class Grid : public Project {
 public:
-    explicit Grid(short dataPin = 4, neoPixelType type = NEO_GRB + NEO_KHZ800, short gridWidth = 16,
+    explicit Grid(short dataPin = 4, neoPixelType colourType = NEO_GRB, neoPixelType otherData = NEO_KHZ800, short gridWidth = 16,
                   short gridHeight = 8);
 
     void init() override;

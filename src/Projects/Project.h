@@ -20,6 +20,8 @@
 
 #include "Effects/Effect.h"
 
+#include "Lib/Gradient.h"
+
 #include "string"
 #include "vector"
 
@@ -28,7 +30,7 @@
  */
 class Project {
 public:
-    Project(int numLeds, short dataPin, neoPixelType type);
+    Project(int numLeds, short dataPin, neoPixelType colourType, neoPixelType otherData);
 
     virtual void init() = 0; // So we don't call subclasses' virtual functions in the constructor
     void loop(); // This loops through the effects and renders them
@@ -37,18 +39,18 @@ public:
 
     int getNumLeds() const { return numLeds; }
 
-    neoPixelType getType() const { return type; }
+    neoPixelType getColourType() const { return colourType; }
+    neoPixelType getOtherData() const { return otherData; }
 
     void drawLeds(Adafruit_NeoPixel *strip);
 
-    void setLed(int ledIndex, uint32_t colour);
-
-    void setEffect(const std::string& effectName, float weight);
+    void setEffect(const std::string& effectName);
 
 protected:
     const int numLeds;
     const short dataPin;
-    const neoPixelType type;
+    const neoPixelType colourType;
+    const neoPixelType otherData;
 
     /**
      * A group is a collection of leds, store the groups here. Ie vertical bars, horizontal bars, etc
@@ -75,6 +77,9 @@ protected:
     virtual void createSets() = 0;
 
     virtual void createEffects() = 0;
+
+    bool hasWComponents = true;
+
 
 private:
     struct EffectWeight {

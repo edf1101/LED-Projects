@@ -41,7 +41,7 @@ void Wave1D::renderEffect(vector<uint32_t> &output) {
     pos = fmod(pos, 1.0f);
 
     // Generate the color based on the position
-    uint32_t colour = Gradient::rainbowGradient.getColor(pos * 255);
+    uint32_t colour = Gradient::sampleGradient(pos * 255);
 
     // Set the LEDs for the group
     pair.group->setLeds(colour, output);
