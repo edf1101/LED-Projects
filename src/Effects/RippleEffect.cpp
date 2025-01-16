@@ -47,6 +47,9 @@ void RippleEffect::renderEffect(std::vector<uint32_t> &output) {
         b += brightness * rippleB;
       }
     }
+    r = min(255, (int) r);
+    g = min(255, (int) g);
+    b = min(255, (int) b);
     pair.group->setLeds(Adafruit_NeoPixel::Color(r, g, b), output);
 
   }
@@ -61,11 +64,10 @@ void RippleEffect::renderEffect(std::vector<uint32_t> &output) {
                                [](const Ripple &r) { return r.currentRadius >= r.endRadius; }),
                 ripples.end());
 
-  Serial.println(ripples.size());
   // Spawn new ripples periodically
   if (millis() - lastSpawnCheck > 100) {
     lastSpawnCheck = millis();
-    if (ripples.size()<maxRipples && random(0, 100) < 10) { // 5% chance to spawn a new ripple per .1s
+    if (ripples.size() < maxRipples && random(0, 100) < 10) { // 5% chance to spawn a new ripple per .1s
       spawnRipple();
     }
   }

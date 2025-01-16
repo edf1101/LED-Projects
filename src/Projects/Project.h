@@ -22,6 +22,8 @@
 
 #include "Lib/Gradient.h"
 
+#include "Web/Web.h"
+
 #include "string"
 #include "vector"
 
@@ -40,17 +42,23 @@ public:
     int getNumLeds() const { return numLeds; }
 
     neoPixelType getColourType() const { return colourType; }
+
     neoPixelType getOtherData() const { return otherData; }
 
     void drawLeds(Adafruit_NeoPixel *strip);
 
-    void setEffect(const std::string& effectName);
+    void setEffect(const std::string &effectName);
+
+    std::vector<std::string> getEffectNames();
 
 protected:
     const int numLeds;
     const short dataPin;
     const neoPixelType colourType;
     const neoPixelType otherData;
+
+    void initWifi() { webServer.setupWeb(this); }
+
 
     /**
      * A group is a collection of leds, store the groups here. Ie vertical bars, horizontal bars, etc
@@ -87,6 +95,8 @@ private:
         float weight;
     };
     std::vector<EffectWeight> currentEffects;
+
+    Web webServer;
 
 };
 

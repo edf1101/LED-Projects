@@ -89,10 +89,10 @@ void Project::loop() {
         uint8_t w = hasWComponents ? ((color >> 24) & 0xFF) : 0;
 
         // Interpolate each channel
-        leds[j] = ((uint32_t)(((leds[j] >> 16) & 0xFF) + r * currentEffects[i].weight) << 16) |
-                  ((uint32_t)(((leds[j] >> 8) & 0xFF) + g * currentEffects[i].weight) << 8) |
-                  ((uint32_t)((leds[j] & 0xFF) + b * currentEffects[i].weight)) |
-                  (hasWComponents ? ((uint32_t)(((leds[j] >> 24) & 0xFF) + w * currentEffects[i].weight) << 24) : 0);
+        leds[j] = ((uint32_t) (((leds[j] >> 16) & 0xFF) + r * currentEffects[i].weight) << 16) |
+                  ((uint32_t) (((leds[j] >> 8) & 0xFF) + g * currentEffects[i].weight) << 8) |
+                  ((uint32_t) ((leds[j] & 0xFF) + b * currentEffects[i].weight)) |
+                  (hasWComponents ? ((uint32_t) (((leds[j] >> 24) & 0xFF) + w * currentEffects[i].weight) << 24) : 0);
       }
     }
   }
@@ -117,4 +117,17 @@ void Project::setEffect(const std::string &effectName) {
 
   auto effect = effects[effectName];
   currentEffects.push_back({effect, 0});
+}
+
+/**
+ * Get the names of the effects in the project
+ *
+ * @return a vector of strings containing the names of the effects
+ */
+std::vector<std::string> Project::getEffectNames() {
+  std::vector<std::string> effectNames;
+  for (const auto &effect: effects) {
+    effectNames.push_back(effect.first);
+  }
+  return effectNames;
 }

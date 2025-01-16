@@ -13,6 +13,7 @@ Adafruit_NeoPixel strip(myProject->getNumLeds(),
 
 void setup() {
   Serial.begin(115200);
+  randomSeed(analogRead(0));
   myProject->init();
   // Initialize all pixels to 'off'
   strip.begin();
@@ -22,10 +23,12 @@ void setup() {
   myProject->setEffect("Ripple Effect");
 }
 
+
 void loop() {
   Gradient::gradientSwitchLoop();
   myProject->loop();
   myProject->drawLeds(&strip);
   delay(1);
+//  Serial.println("looping");
 
 }

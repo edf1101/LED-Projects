@@ -127,6 +127,7 @@ void Grid::init() {
   createGroups();
   createSets();
   createEffects();
+  Project::initWifi(); // needs to be after createEffects
 
   // Initial gradient
   GradientStop *initialStops = new GradientStop[3]{
@@ -136,6 +137,7 @@ void Grid::init() {
   };
   auto *initialGradient = new Gradient(initialStops, 3, false);
   Gradient::setCurrentGradient(initialGradient);
+
 }
 
 int Grid::gridToPix(int x, int y) {
