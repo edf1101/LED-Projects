@@ -19,7 +19,7 @@ void setup() {
   strip.clear();
   strip.show();
   strip.setBrightness(100);
-  myProject->setEffect("2D Wave");
+  myProject->setEffect("Ripple Effect");
 }
 
 void loop() {

@@ -9,6 +9,8 @@
 #include "Effects/PerlinEffect.h"
 #include "Effects/RadialWave.h"
 #include "Effects/AngularWave.h"
+#include "Effects/Rainfall.h"
+#include "Effects/RippleEffect.h"
 
 Grid::Grid(short dataPin, neoPixelType colourType, neoPixelType otherData, short gridWidth, short gridHeight) : Project(
         128, dataPin, colourType, otherData) {
@@ -109,6 +111,16 @@ void Grid::createEffects() {
 
   auto *angularWave = new AngularWave("Angular Wave", (Set2D *) sets["GridSet"], 0.5, 0.5, 1);
   effects.insert({angularWave->getName(), angularWave});
+
+  vector<Set1D *> indivCols = {};
+  for (int i = 0; i < gridWidth; i++) {
+    indivCols.push_back((Set1D *) sets["IndivCol" + std::to_string(i)]);
+  }
+  auto *rainEffect = new Rainfall("Rainfall", indivCols, 1);
+  effects.insert({rainEffect->getName(), rainEffect});
+
+  auto *rippleEffect = new RippleEffect("Ripple Effect", (Set2D *) sets["GridSet"], 1);
+  effects.insert({rippleEffect->getName(), rippleEffect});
 }
 
 void Grid::init() {
@@ -122,7 +134,7 @@ void Grid::init() {
           {128, 0,   255, 255, 0},
           {255, 255, 255, 0,   0},
   };
-  Gradient *initialGradient = new Gradient(initialStops, 3, false);
+  auto *initialGradient = new Gradient(initialStops, 3, false);
   Gradient::setCurrentGradient(initialGradient);
 }
 
