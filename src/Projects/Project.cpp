@@ -6,7 +6,7 @@
 
 #include "Project.h"
 
-#define BLENDING_DURATION 2000.0
+#define BLENDING_DURATION 700.0
 
 /**
  * Constructor
@@ -130,4 +130,15 @@ std::vector<std::string> Project::getEffectNames() {
     effectNames.push_back(effect.first);
   }
   return effectNames;
+}
+
+/**
+ * Get the name of the current effect
+ *
+ * @return the name of the current effect
+ */
+std::string Project::getCurrentEffectName() {
+  if (currentEffects.empty())
+    return "None";
+  return currentEffects[0].effect->getName();
 }

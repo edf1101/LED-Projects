@@ -1,43 +1,37 @@
-/*
- * Created by Ed Fillingham on 16/01/2025.
- *
- * Code for web server partially from randomnerdtutorials.com by Rui Santos
-*/
-
-#ifndef LED_PROJECTS_WEB_H
-#define LED_PROJECTS_WEB_H
-
+#ifndef WEB_H
+#define WEB_H
 
 #include <WiFi.h>
-#include "Arduino.h"
-#include "string"
-#include "vector"
+#include <AsyncTCP.h>
+#include <ESPAsyncWebServer.h>
+#include <vector>
+#include <string>
 
-class Project; // forward declaration
+class Project;
 
 class Web {
 public:
-    void setupWeb(Project *project);
-
-    void loopWeb();
+    void setup(Project* _project);
 
 private:
-    Project *project;
-    std::vector<std::string> effectNames = {};
-
-    // Replace with your network credentials
+    Project* myProject;
     const char *ssid = "SKYF93G6";
     const char *password = "CSZt6Q9x4rDJ";
 
-    // Set web server port number to 80
-    WiFiServer server = WiFiServer(80);
-    String header; // Variable to store the HTTP request
-    unsigned long currentTime = millis(); // Current time
-    unsigned long previousTime = 0; // Previous time
-    const long timeoutTime = 500; // Define timeout time in milliseconds (example: 2000ms = 2s)
+    AsyncWebServer server{80};
+    std::vector<std::string> names{"Effect 1", "Effect 2", "Effect 3"};
 
+    static const char index_html[];
 
+    String outputState(int output);
+    String processor(const String &var);
+
+    void handleRootRequest(AsyncWebServerRequest *request);
+    void handleUpdateRequest(AsyncWebServerRequest *request);
+    void handleSetColorsRequest(AsyncWebServerRequest *request);
+    void handleSetRainbowRequest(AsyncWebServerRequest *request);
+
+    void configureRoutes();
 };
 
-
-#endif //LED_PROJECTS_WEB_H
+#endif // WEB_H

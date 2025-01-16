@@ -48,7 +48,7 @@ public:
     void drawLeds(Adafruit_NeoPixel *strip);
 
     void setEffect(const std::string &effectName);
-
+    std::string getCurrentEffectName();
     std::vector<std::string> getEffectNames();
 
 protected:
@@ -57,7 +57,7 @@ protected:
     const neoPixelType colourType;
     const neoPixelType otherData;
 
-    void initWifi() { webServer.setupWeb(this); }
+    void initWifi() { webServer.setup(this); }
 
 
     /**
