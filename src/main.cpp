@@ -4,7 +4,8 @@
 #include "Lib/Gradient.h"
 
 // Create an instance of the project
-Project *myProject = new Grid(4, NEO_GRB, NEO_KHZ800, 16, 8);
+Project *myProject = new Grid("16x8 Grid",4, NEO_GRB, NEO_KHZ800,
+                              16, 8, ROTATION_0, ROW_MAJOR);
 
 // Create an instance of the Adafruit NeoPixel library with project values
 Adafruit_NeoPixel strip(myProject->getNumLeds(),
@@ -33,6 +34,4 @@ void loop() {
   myProject->loop();
   myProject->drawLeds(&strip);
   delay(1);
-//  Serial.println("looping");
-
 }

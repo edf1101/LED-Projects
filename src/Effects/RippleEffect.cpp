@@ -3,7 +3,7 @@
 #include <cmath>
 
 RippleEffect::RippleEffect(std::string name, Set2D *effectSet, float speed)
-        : Effect(std::move(name)), effectSet(effectSet), speed(speed) {}
+        : Effect(std::move(name), speed), effectSet(effectSet) {}
 
 void RippleEffect::spawnRipple() {
   // Spawn a new ripple at a random position with a random intensity

@@ -15,16 +15,20 @@
 class Effect {
 
 public:
-    explicit Effect(std::string name);
+    explicit Effect(std::string name, float speed = 1);
 
     std::string getName() { return name; };
 
     virtual void renderEffect(std::vector<uint32_t> &output) = 0;
 
-    void reset() { timeValue = 0; };
+    virtual void reset() { timeValue = 0; };
+
+    void setSpeed(float speed) { this->speed = speed; }
+
 protected:
     std::string name = "Effect";
     unsigned long timeValue;
+    float speed;
 
 };
 

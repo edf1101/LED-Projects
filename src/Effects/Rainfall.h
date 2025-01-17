@@ -18,7 +18,6 @@ public:
 
 private:
     vector<Set1D *> effectSets;
-    float speed;
     int maxDrops = 1;
     int effectHeight = 1;
     // Structure to hold each raindrop's status

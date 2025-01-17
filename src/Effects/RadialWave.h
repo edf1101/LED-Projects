@@ -16,7 +16,6 @@ public:
 
 private:
     Set2D *effectSet;
-    float speed;
     float centerX;
     float centerY;
 };

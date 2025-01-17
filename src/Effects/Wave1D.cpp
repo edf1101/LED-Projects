@@ -16,9 +16,8 @@
  * @param effectSet The set to apply the effect to
  * @param speed The speed multiplier of the wave. Default is 1
  */
-Wave1D::Wave1D(std::string name, Set1D *effectSet, float speed) : Effect(std::move(name)) {
+Wave1D::Wave1D(std::string name, Set1D *effectSet, float speed) : Effect(std::move(name), speed) {
   this->effectSet = effectSet;
-  this->speed = speed;
 }
 
 void Wave1D::renderEffect(vector<uint32_t> &output) {
@@ -34,7 +33,7 @@ void Wave1D::renderEffect(vector<uint32_t> &output) {
   // Loop through the groups in the set
   for (auto pair: effectSet->getPairings()) {
     // Map each group's position to a range of 0-1 and add the offset
-    float pos = helpers::floatMap(pair.iPos, minX, maxX, 0, 1.0f/effectWavelength);
+    float pos = helpers::floatMap(pair.iPos, minX, maxX, 0, 1.0f / effectWavelength);
     pos += offset;
 
     // Ensure pos stays in the range [0, 1] by wrapping around

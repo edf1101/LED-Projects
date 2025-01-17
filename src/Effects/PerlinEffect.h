@@ -15,7 +15,6 @@ public:
     void renderEffect(std::vector<uint32_t>& output) override;
 private:
     Set2D* effectSet;
-    float speed;
     float frequency;
 };
 

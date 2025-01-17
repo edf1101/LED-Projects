@@ -3,9 +3,8 @@
 #include "lib/Audio/SpectrumAnalysis.h"
 
 Spectrometer::Spectrometer(std::string name, std::vector<Set1D *> effectSets, float speed, float smoothingFactor)
-        : Effect(std::move(name)), smoothingFactor(smoothingFactor) {
+        : Effect(std::move(name), speed), smoothingFactor(smoothingFactor) {
   this->effectSets = std::move(effectSets);
-  this->speed = speed;
   this->effectHeight = this->effectSets[0]->getSetSize();
 
   // Initialize smoothed FFT with zeros
@@ -59,9 +58,9 @@ void Spectrometer::renderEffect(std::vector<uint32_t> &output) {
         b *= fractional;
 
         // make sure r,b,g are between 0 and 255
-        r = std::min(255, (int)std::max(0, (int)r));
-        g = std::min(255, (int)std::max(0, (int)g));
-        b = std::min(255, (int)std::max(0, (int)b));
+        r = std::min(255, (int) std::max(0, (int) r));
+        g = std::min(255, (int) std::max(0, (int) g));
+        b = std::min(255, (int) std::max(0, (int) b));
 
         uint32_t partialColour = Adafruit_NeoPixel::Color(r, g, b);
         pairing.group->setLeds(partialColour, output);

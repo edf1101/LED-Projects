@@ -4,6 +4,8 @@
 
 #include "Grid.h"
 
+#include <utility>
+
 #include "Effects/Wave1D.h"
 #include "Effects/Wave2D.h"
 #include "Effects/PerlinEffect.h"
@@ -12,12 +14,29 @@
 #include "Effects/Rainfall.h"
 #include "Effects/RippleEffect.h"
 #include "Effects/Spectrometer.h"
+#include "Effects/BouncingBallsEffect.h"
 
-Grid::Grid(short dataPin, neoPixelType colourType, neoPixelType otherData, short gridWidth, short gridHeight) : Project(
-        128, dataPin, colourType, otherData) {
-  this->gridWidth = gridWidth;
-  this->gridHeight = gridHeight;
+Grid::Grid(std::string name, short dataPin, neoPixelType colourType, neoPixelType otherData, short width, short height,
+           Rotation gridRotation, GridWiring gridWiring) : Project(
+        std::move(name), 128, dataPin, colourType, otherData) {
+  // Keep the *original* physical dims in separate variables:
+  this->origWidth = width;
+  this->origHeight = height;
+
+  // Then do the swap in constructor so "gridWidth" and "gridHeight"
+  // become the rotated dimension:
+  if (gridRotation == ROTATION_90 || gridRotation == ROTATION_270) {
+    this->gridWidth = height; // swapped
+    this->gridHeight = width;
+  } else {
+    this->gridWidth = width;
+    this->gridHeight = height;
+  }
+
+  this->gridRotation = gridRotation;
+  this->gridWiring = gridWiring;
 }
+
 
 void Grid::createGroups() {
   // create the single pixel groups
@@ -117,6 +136,11 @@ void Grid::createEffects() {
 
   auto *rippleEffect = new RippleEffect("Ripple Effect", (Set2D *) sets["GridSet"], 1);
   effects.insert({rippleEffect->getName(), rippleEffect});
+
+  auto *bouncingBallsEffect = new BouncingBallsEffect("Bouncing Balls", (Set2D *) sets["GridSet"], 3, 1, 2);
+  effects.insert({bouncingBallsEffect->getName(), bouncingBallsEffect});
+
+
 }
 
 void Grid::init() {
@@ -135,13 +159,44 @@ void Grid::init() {
 }
 
 int Grid::gridToPix(int x, int y) {
-  int n = x * gridHeight;
-  if (x % 2 == 0)
-    n += y;
-  else
-    n += gridHeight - 1 - y;
-  return n;
+  int col, row; // "old" column and row in the *physical*, unrotated sense
+  switch (gridRotation) {
+    case ROTATION_90:
+      col = y;
+      row = (origHeight - 1) - x;
+      break;
+    case ROTATION_180:
+      col = (origWidth - 1) - x;
+      row = (origHeight - 1) - y;
+      break;
+    case ROTATION_270:
+      col = (origWidth - 1) - y;
+      row = x;
+      break;
+    default: // ROTATION_0
+      col = x;
+      row = y;
+  }
+
+  // Now do the physical zigzag:
+  if (gridWiring == ROW_MAJOR) {
+    int base = col * origHeight;
+    if (col % 2 == 0) {
+      return base + row;
+    } else {
+      return base + (origHeight - 1 - row);
+    }
+  } else { // COLUMN_MAJOR
+    int index = row * origWidth;
+    if (row % 2 == 0) {
+      index += col;
+    } else {
+      index += (origWidth - 1 - col);
+    }
+    return index;
+  }
 }
+
 
 void Grid::addAudioAnalysis(int sck, int ws, int sd, bool leftChannel) {
   Project::addAudioAnalysis(sck, ws, sd, leftChannel);

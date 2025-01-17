@@ -8,9 +8,8 @@
 
 #define EFFECT_LENGTH (1000*60*2)
 
-PerlinEffect::PerlinEffect(std::string name, Set2D *effectSet, float frequency, float speed) : Effect(std::move(name)),
+PerlinEffect::PerlinEffect(std::string name, Set2D *effectSet, float frequency, float speed) : Effect(std::move(name),speed),
                                                                                                effectSet(effectSet),
-                                                                                               speed(speed),
                                                                                                frequency(frequency) {}
 
 /**
@@ -23,6 +22,7 @@ void PerlinEffect::renderEffect(vector<uint32_t> &output) {
   timeValue = millis();
   // get min and max x and y values
 
+  Serial.println(speed);
   float minPos = min(effectSet->getMinX(), effectSet->getMinY());
   float maxPos = max(effectSet->getMaxX(), effectSet->getMaxY());
 

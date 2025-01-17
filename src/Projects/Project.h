@@ -32,7 +32,7 @@
  */
 class Project {
 public:
-    Project(int numLeds, short dataPin, neoPixelType colourType, neoPixelType otherData);
+    Project(std::string name ,int numLeds, short dataPin, neoPixelType colourType, neoPixelType otherData);
 
     virtual void init() = 0; // So we don't call subclasses' virtual functions in the constructor
     void loop(); // This loops through the effects and renders them
@@ -56,6 +56,9 @@ public:
     virtual void addAudioAnalysis(int sck, int ws, int sd, bool leftChannel);
 
     void addWifi(const char *ssid, const char *password);
+    std::string getName() { return name; }
+
+    void setSpeed(float speed);
 
 
 protected:
@@ -63,6 +66,7 @@ protected:
     const short dataPin;
     const neoPixelType colourType;
     const neoPixelType otherData;
+    std::string name;
 
 
     /**

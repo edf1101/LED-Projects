@@ -6,6 +6,8 @@
 
 #include "Project.h"
 
+#include <utility>
+
 #define BLENDING_DURATION 700.0
 
 /**
@@ -15,8 +17,8 @@
  * @param dataPin the data pin for the project
  * @param type the type of leds used (GRB, RGB, etc)
  */
-Project::Project(int numLeds, short dataPin, neoPixelType colourType, neoPixelType otherData)
-        : numLeds(numLeds), dataPin(dataPin), colourType(colourType), otherData(otherData), leds(numLeds) {
+Project::Project(std::string name, int numLeds, short dataPin, neoPixelType colourType, neoPixelType otherData)
+        :name(std::move(name)), numLeds(numLeds), dataPin(dataPin), colourType(colourType), otherData(otherData), leds(numLeds) {
   // set all leds to black on start
   for (int i = 0; i < numLeds; i++) {
     leds[i] = Adafruit_NeoPixel::Color(0, 0, 0);
@@ -89,11 +91,11 @@ void Project::loop() {
         uint8_t w = hasWComponents ? ((color >> 24) & 0xFF) : 0;
 
         // Clamp and blend the values
-        r = std::min(255, (int)((leds[j] >> 16 & 0xFF) + r * currentEffects[i].weight));
-        g = std::min(255, (int)((leds[j] >> 8 & 0xFF) + g * currentEffects[i].weight));
-        b = std::min(255, (int)((leds[j] & 0xFF) + b * currentEffects[i].weight));
+        r = std::min(255, (int) ((leds[j] >> 16 & 0xFF) + r * currentEffects[i].weight));
+        g = std::min(255, (int) ((leds[j] >> 8 & 0xFF) + g * currentEffects[i].weight));
+        b = std::min(255, (int) ((leds[j] & 0xFF) + b * currentEffects[i].weight));
         w = hasWComponents
-            ? std::min(255, (int)((leds[j] >> 24 & 0xFF) + w * currentEffects[i].weight))
+            ? std::min(255, (int) ((leds[j] >> 24 & 0xFF) + w * currentEffects[i].weight))
             : 0;
 
         leds[j] = Adafruit_NeoPixel::Color(r, g, b, w);
@@ -120,6 +122,7 @@ void Project::setEffect(const std::string &effectName) {
     return;
 
   auto effect = effects[effectName];
+  effect->reset();
   currentEffects.push_back({effect, 0});
 }
 
@@ -168,4 +171,17 @@ void Project::addWifi(const char *ssid, const char *password) {
   webServer = new Web();
   webServer->setup(this, ssid, password);
 
+}
+
+/**
+ * Set the speed of the effects
+ *
+ * @param speed The speed of the effects
+ */
+void Project::setSpeed(float speed) {
+  if (speed >1.5 || speed < 0.5)
+    return;
+    for (auto effect : effects) {
+      effect.second->setSpeed(speed);
+    }
 }

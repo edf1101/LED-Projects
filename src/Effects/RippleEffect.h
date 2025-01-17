@@ -14,7 +14,6 @@ public:
 private:
     unsigned long lastSpawnCheck = 0;
     Set2D *effectSet;
-    float speed;
 
     struct Ripple {
         float centerX;

@@ -34,6 +34,8 @@ private:
     void handleSetRainbowRequest(AsyncWebServerRequest *request);
 
     void configureRoutes();
+
+    void handleSetSpeedRequest(AsyncWebServerRequest *request);
 };
 
 #endif // WEB_H

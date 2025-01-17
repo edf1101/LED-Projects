@@ -11,8 +11,7 @@
  * @param effectSets The sets that the rain operates on. Ie the columns to rain down.
  * @param speed The speed of the rain
  */
-Rainfall::Rainfall(std::string name, vector<Set1D *> effectSets, float speed) : Effect(name) {
-  this->speed = speed;
+Rainfall::Rainfall(std::string name, vector<Set1D *> effectSets, float speed) : Effect(std::move(name),speed) {
   this->effectSets = std::move(effectSets);
   maxDrops = (int) this->effectSets.size() + 2;
   effectHeight = this->effectSets[0]->getSetSize();
@@ -39,8 +38,8 @@ void Rainfall::renderEffect(vector<uint32_t> &output) {
   // Move the drops down
   for (auto &drop: drops) {
     if (drop.active) {
-      drop.y += drop.speed * speed; // Move the drop down
-      if (drop.y >= (float) effectHeight) {
+      drop.y -= drop.speed * speed; // Move the drop down
+      if (drop.y <= -drop.trailLength) {
         drop.active = false; // Deactivate if it reaches the bottom
       }
     }
@@ -101,7 +100,7 @@ void Rainfall::spawnDrop() {
   for (auto &drop: drops) {
     if (!drop.active) {
       drop.x = random(0, (int) effectSets.size()); // Random column
-      drop.y = 0;                // Start at the top
+      drop.y = (float)effectHeight;                // Start at the top
       drop.active = true;
       int i = random(0, 255);
       drop.color = Gradient::sampleGradient(i); // Random color

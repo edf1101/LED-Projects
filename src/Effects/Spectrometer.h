@@ -14,7 +14,6 @@ public:
 private:
     std::vector<Set1D *> effectSets;
     std::vector<float> smoothedFFT; // Stores the smoothed FFT values
-    float speed;
     int effectHeight;
     float smoothingFactor; // Smoothing factor for rolling average
 

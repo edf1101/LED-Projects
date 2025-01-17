@@ -6,9 +6,8 @@
 #include "lib/helpers.h"
 #define EFFECT_LENGTH 2
 
-AngularWave::AngularWave(std::string name, Set2D *effectSet, float centerX, float centerY, float speed) : Effect(std::move(name)) {
+AngularWave::AngularWave(std::string name, Set2D *effectSet, float centerX, float centerY, float speed) : Effect(std::move(name),speed) {
   this->effectSet = effectSet;
-  this->speed = speed;
   this->centerX = centerX;
   this->centerY = centerY;
 }

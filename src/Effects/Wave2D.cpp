@@ -17,9 +17,8 @@
  * @param angle The angle of the wave in degrees
  * @param speed The speed multiplier of the wave. Default is 1
  */
-Wave2D::Wave2D(std::string name, Set2D *effectSet, float angle, float speed) : Effect(std::move(name)) {
+Wave2D::Wave2D(std::string name, Set2D *effectSet, float angle, float speed) :Effect(std::move(name),speed) {
   this->effectSet = effectSet;
-  this->speed = speed;
   this->angle = angle;
 }
 
