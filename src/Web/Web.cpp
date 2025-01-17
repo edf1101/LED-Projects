@@ -4,7 +4,6 @@
 
 // HTML Template
 const char Web::index_html[] PROGMEM = R"rawliteral(
-<!DOCTYPE HTML><html>
 <!DOCTYPE HTML>
 <html>
 <head>
