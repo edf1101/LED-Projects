@@ -7,11 +7,12 @@
 
 class RippleEffect : public Effect {
 public:
-    explicit RippleEffect(std::string name, Set2D *effectSet, float speed = 1);
+    explicit RippleEffect(std::string name, Set2D *effectSet,bool fillIn, float speed = 1);
 
     void renderEffect(std::vector<uint32_t> &output) override;
 
 private:
+    bool filledIn;
     unsigned long lastSpawnCheck = 0;
     Set2D *effectSet;
 

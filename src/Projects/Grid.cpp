@@ -134,12 +134,14 @@ void Grid::createEffects() {
   auto *rainEffect = new Rainfall("Rainfall", indivCols, 1);
   effects.insert({rainEffect->getName(), rainEffect});
 
-  auto *rippleEffect = new RippleEffect("Ripple Effect", (Set2D *) sets["GridSet"], 1);
+  auto *rippleEffect = new RippleEffect("Ripple Effect", (Set2D *) sets["GridSet"], false, 1);
   effects.insert({rippleEffect->getName(), rippleEffect});
 
   auto *bouncingBallsEffect = new BouncingBallsEffect("Bouncing Balls", (Set2D *) sets["GridSet"], 3, 1, 2);
   effects.insert({bouncingBallsEffect->getName(), bouncingBallsEffect});
 
+  auto *filledCirclesEffect = new RippleEffect("Filled Circles", (Set2D *) sets["GridSet"], true);
+  effects.insert({filledCirclesEffect->getName(), filledCirclesEffect});
 
 }
 

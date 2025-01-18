@@ -2,8 +2,8 @@
 #include "lib/helpers.h"
 #include <cmath>
 
-RippleEffect::RippleEffect(std::string name, Set2D *effectSet, float speed)
-        : Effect(std::move(name), speed), effectSet(effectSet) {}
+RippleEffect::RippleEffect(std::string name, Set2D *effectSet, bool fillIn, float speed)
+        : Effect(std::move(name), speed), effectSet(effectSet), filledIn(fillIn) {}
 
 void RippleEffect::spawnRipple() {
   // Spawn a new ripple at a random position with a random intensity
@@ -34,17 +34,34 @@ void RippleEffect::renderEffect(std::vector<uint32_t> &output) {
     for (auto &ripple: ripples) {
       float distance = sqrt(pow(xPos - ripple.centerX, 2) + pow(yPos - ripple.centerY, 2));
 
-      // Check if the distance falls within the ripple's radius
-      if (distance < ripple.currentRadius && distance > ripple.currentRadius - 0.1f) {
-        float brightness = ripple.intensity * (1.0f - ripple.currentRadius / ripple.endRadius);
-        // get the colour of the ripple
-        uint8_t rippleR = (ripple.colour >> 16) & 0xFF;
-        uint8_t rippleG = (ripple.colour >> 8) & 0xFF;
-        uint8_t rippleB = ripple.colour & 0xFF;
+      if (filledIn) {
+        if (distance <= ripple.currentRadius) {
+          float edgeFade = (ripple.currentRadius - distance) / 0.1f; // Fades out within 10% of ripple radius
+          edgeFade = max(0.0f, min(1.0f, edgeFade)); // Clamp edgeFade between 0 and 1
+          float brightness = ripple.intensity * edgeFade * (1.0f - ripple.currentRadius / ripple.endRadius);
 
-        r += brightness * rippleR;
-        g += brightness * rippleG;
-        b += brightness * rippleB;
+          // Extract the ripple's color components
+          uint8_t rippleR = (ripple.colour >> 16) & 0xFF;
+          uint8_t rippleG = (ripple.colour >> 8) & 0xFF;
+          uint8_t rippleB = ripple.colour & 0xFF;
+
+          r += brightness * rippleR;
+          g += brightness * rippleG;
+          b += brightness * rippleB;
+        }
+      } else {
+        // Check if the distance falls within the ripple's radius
+        if (distance < ripple.currentRadius && distance > ripple.currentRadius - 0.1f) {
+          float brightness = ripple.intensity * (1.0f - ripple.currentRadius / ripple.endRadius);
+          // get the colour of the ripple
+          uint8_t rippleR = (ripple.colour >> 16) & 0xFF;
+          uint8_t rippleG = (ripple.colour >> 8) & 0xFF;
+          uint8_t rippleB = ripple.colour & 0xFF;
+
+          r += brightness * rippleR;
+          g += brightness * rippleG;
+          b += brightness * rippleB;
+        }
       }
     }
     r = min(255, (int) r);
